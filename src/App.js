@@ -56,6 +56,13 @@ const App = () => {
             setNewName('')
             setNewNumber('')
           })
+          .catch(error => {
+            const errorData = error.response.data
+            setErrorMessage(errorData.error)
+            setTimeout(() => {
+              setErrorMessage(null)
+            }, 3000)
+          })
       }
     } else {
       const personObject = {
@@ -74,6 +81,13 @@ const App = () => {
           setSuccessfulMessage(`Added ${returnedPerson.name}`)
           setTimeout(() => {
             setSuccessfulMessage(null)
+          }, 3000)
+        })
+        .catch(error => {
+          const errorData = error.response.data
+          setErrorMessage(errorData.error)
+          setTimeout(() => {
+            setErrorMessage(null)
           }, 3000)
         })
     }
