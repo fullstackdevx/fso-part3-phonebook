@@ -27,8 +27,7 @@ const App = () => {
   const [newName, setNewName] = useState('')
   const [newNumber, setNewNumber] = useState('')
   const [nameFilter, setNameFilter] = useState('')
-  const [successfulMessage, setSuccessfulMessage] = useState(null)
-  const [errorMessage, setErrorMessage] = useState(null)
+  const [notification, setNotification] = useState(null)
 
   useEffect(() => {
     personService
@@ -37,6 +36,13 @@ const App = () => {
         setPersons(initialPersons)
       })
   }, [])
+
+  const showMessage = (message, type = 'success') => {
+    setNotification({ message, type })
+    setTimeout(() => {
+      setNotification(null)
+    }, 3000)
+  }
 
   const addName = (event) => {
     event.preventDefault()
@@ -58,10 +64,7 @@ const App = () => {
           })
           .catch(error => {
             const errorData = error.response.data
-            setErrorMessage(errorData.error)
-            setTimeout(() => {
-              setErrorMessage(null)
-            }, 3000)
+            showMessage(errorData.error, 'error')
           })
       }
     } else {
@@ -78,17 +81,11 @@ const App = () => {
           setNewName('')
           setNewNumber('')
 
-          setSuccessfulMessage(`Added ${returnedPerson.name}`)
-          setTimeout(() => {
-            setSuccessfulMessage(null)
-          }, 3000)
+          showMessage(`Added ${returnedPerson.name}`)
         })
         .catch(error => {
           const errorData = error.response.data
-          setErrorMessage(errorData.error)
-          setTimeout(() => {
-            setErrorMessage(null)
-          }, 3000)
+          showMessage(errorData.error, 'error')
         })
     }
   }
@@ -104,10 +101,7 @@ const App = () => {
           }
         })
         .catch(error => {
-          setErrorMessage(`information of ${name} has already been removed from server`)
-          setTimeout(() => {
-            setErrorMessage(null)
-          }, 3000)
+          showMessage(`information of ${name} has already been removed from server`, 'error')
           setPersons(persons.filter(person => person.id !== id))
         })
     }
@@ -130,8 +124,7 @@ const App = () => {
   return (
     <div>
       <h2>Phonebook</h2>
-      <Notification type='success' message={successfulMessage} />
-      <Notification type='error' message={errorMessage} />
+      <Notification notification={notification} />
       <Filter value={nameFilter} handleChange={handleNameFilterChange} />
       <h3>add a new</h3>
       <PersonForm newName={newName} handleNameChange={handleNameChange} newNumber={newNumber} handleNumberChange={handleNumberChange} handleSubmit={addName} />
